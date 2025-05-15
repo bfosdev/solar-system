@@ -18,7 +18,7 @@ jobs:
         strategy:
           matrix:
             nodejs_version: [18, 20]
-            operating_system: [ubuntu-latest, macos-latest]
+            operating_system: [ubuntu-latest]
             exclude:
               - nodejs_version: 18
                 operating_system: macos-latest
@@ -83,3 +83,17 @@ jobs:
             name: Code-Coverage-Result
             path: coverage
             retention-days: 5
+
+    docker:
+        name: Containerization
+        needs: [unit-testing, code-coverage]
+        runs-on: ubuntu-latest
+        steps:
+          - name: CHeckout Repo
+            uses: actions/checkout@v4
+
+          - name: Dockerhub Login
+            uses: docker/login-action@v3.4.0
+            with:
+              username: ${{ vars.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_PASSWORD }} 
