@@ -66,5 +66,5 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
             name: Code-Coverage-Result
-            path: test-results.xml
+            path: coverage
             retention-days: 5
