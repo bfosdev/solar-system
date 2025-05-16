@@ -108,7 +108,7 @@ jobs:
         name: Containerization
         needs: [unit-testing, code-coverage]
         permissions: 
-           packages: write
+          packages: write
         runs-on: ubuntu-latest
         steps:
           - name: CHeckout Repo
