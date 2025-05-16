@@ -183,6 +183,11 @@ jobs:
               echo ---------------------------------------------------
               kubectl get nodes
 
+          - name: Ensure Namespace Exists
+            run: |
+              kubectl get namespace ${{ vars.NAMESPACE }} || kubectl create namespace ${{ vars.NAMESPACE }}
+
+
           - name: Save Nginx Ingress Controller IP as GitHub Environment Variable
             run: |
               echo "INGRESS_IP=$(kubectl -n ingress-nginx get services ingress-nginx-controller -o jsonpath="{.status.loadBalancer.ingress[0].ip}")" >> $GITHUB_ENV
