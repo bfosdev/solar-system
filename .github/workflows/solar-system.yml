@@ -245,7 +245,7 @@ jobs:
             run: |
               echo $URL
               echo "-------------------------------------------------"
-              curl https://$URL/live -s -k | jq -r .status | grep -i live
+              curl https://$URL/live -s -k | jq -r .status | grep -i live 
 
     prod-deploy: 
       if: github.ref == 'refs/heads/main'
