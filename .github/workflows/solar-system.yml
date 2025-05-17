@@ -326,7 +326,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         needs: prod-deploy
         runs-on: ubuntu-latest
-        steps:
+        steps:         
           - name: Test URL Output using CURL and JQ
             env:
               URL: ${{ needs.prod-deploy.outputs.APP_INGRESS_URL }}
