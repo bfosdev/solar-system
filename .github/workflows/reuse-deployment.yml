@@ -51,7 +51,7 @@ jobs:
                 tokenPrefix: '_{_'
                 tokenSuffix: '_}_'
                 files: '["kubernetes/development/*.yaml"]'
-                env:
+              env:
                 NAMESPACE: ${{ vars.NAMESPACE }}
                 REPLICAS: ${{ vars.REPLICAS }}
                 IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/solar-system:${{ github.sha }} 
