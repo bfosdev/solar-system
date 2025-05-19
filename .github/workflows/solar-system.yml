@@ -25,12 +25,12 @@ jobs:
             MONGO_USERNAME: non-prod-user
             MONGO_PASSWORD: non-prod-password
         strategy:
-          matrix:
-            nodejs_version: [18, 20]
-            operating_system: [ubuntu-latest]
-            exclude:
-              - nodejs_version: 18
-                operating_system: macos-latest
+            matrix:
+              nodejs_version: [18, 20]
+              operating_system: [ubuntu-latest]
+              exclude:
+                - nodejs_version: 18
+                  operating_system: macos-latest
         runs-on: ${{ matrix.operating_system }}
         steps:
         - name: Checkout Repository
@@ -58,7 +58,7 @@ jobs:
           if: always() 
           uses: actions/upload-artifact@v4
           with:
-            name: Mocha-Test-Result ${{ matrix.nodejs_version }} ${{ matrix.operating_system }}
+            name: Mocha-Test-Result 
             path: test-results.xml
 
     code-coverage:
