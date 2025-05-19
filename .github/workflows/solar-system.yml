@@ -41,14 +41,10 @@ jobs:
           with:
             node-version: ${{ matrix.nodejs_version }}
 
-        - name: Cache NPM dependencies
-          uses: actions/cache@v4
+        - name: Composite Action - Cache and Install NPM Packages
+          uses: ./.github/workflows/custom-actions/npm-action
           with:
-            path: ~/.npm
-            key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }} 
-
-        - name: Install Dependencies
-          run: npm install
+            path-to-folder: node_modules
     
         - name: Unit Testing
           id: nodejs-unit-testing-step
@@ -84,14 +80,10 @@ jobs:
  #         with:
  #           node-version: 20
 
-        - name: Cache NPM dependencies
-          uses: actions/cache@v4
+        - name: Composite Action - Cache and Install NPM Packages
+          uses: ./.github/workflows/custom-actions/npm-action
           with:
-            path: ~/.npm
-            key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }} 
-    
-        - name: Install Dependencies
-          run: npm install
+            path-to-folder: node_modules
     
         - name: Check Code Coverage
           continue-on-error: true
@@ -144,7 +136,6 @@ jobs:
             AWS_REGION: 'us-east-2'
             SOURCE_DIR: 'reports-${{ github.sha }}'
             DEST_DIR: 'reports-${{ github.sha }}'
-
 
     docker:
         name: Containerization
