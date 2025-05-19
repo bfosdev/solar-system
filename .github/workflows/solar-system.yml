@@ -110,10 +110,15 @@ jobs:
       runs-on: ubuntu-latest
       continue-on-error: true
       steps:
-        - name: Download Code Coverage Artifact
+        - name: Download Code Coverage Artifact - Node 18
           uses: actions/download-artifact@v4
           with:
-            name: Mocha-Test-Result-${{ matrix.nodejs_version }}-${{ matrix.operating_system }}
+            name: Mocha-Test-Result-18-ubuntu-latest
+
+        - name: Download Code Coverage Artifact - Node 20
+          uses: actions/download-artifact@v4
+          with:
+            name: Mocha-Test-Result-20-ubuntu-latest
 
         - name: Download Code Coverage Artifact
           uses: actions/download-artifact@v4
