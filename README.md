@@ -1,49 +1,106 @@
-# Solar System NodeJS Application
+This is a multi-stage CI/CD pipeline triggered on pushes to main or feature/* branches and manually (workflow_dispatch), composed of:
 
-A simple HTML+MongoDB+NodeJS project to display Solar System and it's planets.
+CI Phase
+Jobs:
 
----
-## Requirements
+unit-testing
 
-For development, you will only need Node.js and NPM installed in your environement.
+Uses mongodb container service.
 
-### Node
-- #### Node installation on Windows
+Tests on Node.js 18 and 20.
 
-  Just go on [official Node.js website](https://nodejs.org/) and download the installer.
-Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/)).
+Caches and installs node_modules using a composite action.
 
-- #### Node installation on Ubuntu
+Outputs Mocha test-results.xml.
 
-  You can install nodejs and npm easily with apt install, just run the following commands.
+code-coverage
 
-      $ sudo apt install nodejs
-      $ sudo apt install npm
+Uses node:20 Docker container and MongoDB service.
 
-- #### Other Operating Systems
-  You can find more information about the installation on the [official Node.js website](https://nodejs.org/) and the [official NPM website](https://npmjs.org/).
+Skips setup-node because the container already includes Node.js.
 
-If the installation was successful, you should be able to run the following command.
+Runs npm run coverage and archives output in coverage/.
 
-    $ node --version
-    v8.11.3
 
-    $ npm --version
-    6.1.0
+Artifact Handling
+reports-s3
 
----
-## Install Dependencies from `package.json`
-    $ npm install
+Downloads both unit test and coverage artifacts.
 
-## Run Unit Testing
-    $ npm test
+Merges and uploads them to an AWS S3 bucket.
 
-## Run Code Coverage
-    $ npm run coverage
 
-## Run Application
-    $ npm start
+Containerization
+docker
 
-## Access Application on Browser
-    http://localhost:3000/
+Builds the Docker image.
 
+Tests the image locally with wget on 127.0.0.1:3000/live.
+
+Pushes to both DockerHub and GHCR.
+
+
+CD Phase
+✅ For feature branches:
+dev-deploy
+
+Calls the reusable workflow with:
+
+Environment: development
+
+k8s-manifest-dir: kubernetes/development/
+
+dev-integration-testing
+
+Verifies https://$URL/live using curl and jq.
+
+✅ For main branch:
+prod-deploy
+
+Calls the reusable workflow with:
+
+Environment: production
+
+k8s-manifest-dir: kubernetes/production/
+
+prod-integration-testing
+
+Similar curl test against the production app.
+
+
+Notifications
+slack-notification
+
+Posts a message to Slack via webhook after both test paths.
+
+Continues on error, so it won’t block the workflow.
+
+
+Reusable Workflow: reuse-deployment.yml
+Triggered by workflow_call, it:
+
+Accepts:
+
+MongoDB URI
+
+Kubernetes manifest directory
+
+Environment name
+
+Kubeconfig secret
+
+MongoDB password
+
+Installs and sets up kubectl, sets the kubeconfig.
+
+Ensures the target Kubernetes namespace exists.
+
+Extracts the Ingress IP for _{{_INGRESS_IP_}}_ substitution.
+
+Uses replace-tokens to template the manifests.
+
+Creates MongoDB secret in the specified namespace.
+
+Applies the manifest files.
+
+Exposes the final ingress URL back to the caller (application-url).
